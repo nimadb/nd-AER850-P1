@@ -17,6 +17,8 @@ from pandas.plotting import scatter_matrix
 from sklearn.model_selection import StratifiedShuffleSplit
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.cm import get_cmap
+import copy
+
 
 plt.close('all')        # Close all figures
 def print_asterisk_line():
@@ -48,7 +50,7 @@ df_counts = df_counts.sort_values(by='Step')
 print(df_counts)
 print_asterisk_line()
 
-# # %% - Step 2 - Visualization and Data Analysis
+# %% - Step 2 - Visualization and Data Analysis
 # print("Visualization and analysis of entire data set")
 # # Scatter mattrix of whole data 
 # fig = plt.figure()
@@ -137,7 +139,7 @@ print_asterisk_line()
 #     plt.title(f'Pairplot for Step {step}')
 #     plt.show()
 # print_asterisk_line() 
-# # %% - Step 3 - Correlation Analysis
+# %% - Step 3 - Correlation Analysis
 # # Create lists to store the correlations
 # correlations_x = []
 # correlations_y = []
@@ -219,34 +221,18 @@ print_asterisk_line()
 print_asterisk_line() 
 
 # %% Step 4 - Classification and Model Development/Engineering
-#stratified sampling
-# split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=20231005)
-# for train_index, test_index in split.split(df, df["Step"]):
-#     strat_train_set = df.loc[train_index].reset_index(drop=True)
-#     strat_test_set = df.loc[test_index].reset_index(drop=True)
-
-# train_data = strat_train_set[['X', 'Y', 'Z', 'Step']]
-# print(train_data.info())
-# print(train_data.describe())
-# print(train_data)
-
-# train_step_counts = train_data['Step'].value_counts().reset_index()
-# train_step_counts.columns = ['Step', 'Count']
-# train_step_counts = train_step_counts.sort_values(by='Step')
-# print(train_step_counts)
-
 from sklearn.model_selection import train_test_split
 # Load your dataset (Assuming df contains your data)
 X = df[['X', 'Y', 'Z']]
 y = df['Step']
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+test = X_test.copy()
+test['Step'] = y_test
+test = test.reset_index(drop=True)
+print_asterisk_line()
 
-# Analyze training data set
-# print(X_train.info())
-# print(X_train.describe())
-# print(X_train)
-
+# %% - Step 4a) - LogisticRegression Model
 from sklearn.linear_model import LogisticRegression
 # Create a Logistic Regression model
 LR_model = LogisticRegression()
@@ -255,11 +241,11 @@ LR_model.fit(X_train, y_train)
 
 # Use the trained model to make predictions on the test data
 LR_y_pred = LR_model.predict(X_test)
+LR_results = X_test.copy()
+LR_results['Step'] = LR_y_pred
+LR_results = LR_results.reset_index(drop=True)
 
-# print(LR_y_pred.info())
-# print(LR_y_pred.describe())
-# print(LR_y_pred)
-
+# LR Model Evaluation
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 # Calculate accuracy
 LR_accuracy = accuracy_score(y_test, LR_y_pred)
@@ -272,4 +258,72 @@ LR_cm = confusion_matrix(y_test, LR_y_pred)
 print('Confusion Matrix:')
 print(LR_cm)
 
+LR_results['Actual_Step'] = test['Step']
+LR_results['Difference'] = LR_results['Step'] - test['Step']
+print(LR_results)
+non_zero_rows = LR_results[LR_results['Difference'] != 0]
+print(non_zero_rows)
+num_non_zero_rows = non_zero_rows.shape[0]
+num_rows_LR_results = LR_results.shape[0]
+print("Total number of rows with non-zero values:", num_non_zero_rows, "out of", num_rows_LR_results)
+print_asterisk_line()
 
+# %% - Step 4b) - Decision Tree Model
+from sklearn.tree import DecisionTreeClassifier  # For classification
+clf_model = DecisionTreeClassifier()
+clf_model.fit(X_train, y_train)
+clf_y_pred = clf_model.predict(X_test)
+
+clf_results = X_test.copy()
+clf_results['Step'] = clf_y_pred
+clf_results = clf_results.reset_index(drop=True)
+
+# clf Model Evaluation
+clf_accuracy = accuracy_score(y_test, clf_y_pred)
+print(f"clf_Accuracy: {clf_accuracy}")
+# Generate the classification report
+clf_report = classification_report(y_test, clf_y_pred)
+print("Classification Report:\n", clf_report)
+# Generate the confusion matrix
+clf_cm = confusion_matrix(y_test, clf_y_pred)
+print("Confusion Matrix:\n", clf_cm)
+
+clf_results['Actual_Step'] = test['Step']
+clf_results['Difference'] = clf_results['Step'] - test['Step']
+print(clf_results)
+clf_non_zero_rows = clf_results[clf_results['Difference'] != 0]
+print(clf_non_zero_rows)
+clf_num_non_zero_rows = clf_non_zero_rows.shape[0]
+clf_num_rows_clf_results = clf_results.shape[0]
+print("Total number of rows with non-zero values:", clf_num_non_zero_rows, "out of", clf_num_rows_clf_results)
+print_asterisk_line()
+
+# %% - Step 5b) - Random Forest Model
+from sklearn.ensemble import RandomForestClassifier  # For classification
+rf_model = RandomForestClassifier(n_estimators=100)  # You can adjust hyperparameters like the number of trees (n_estimators)
+rf_model.fit(X_train, y_train)
+rf_y_pred = rf_model.predict(X_test)
+
+rf_results = X_test.copy()
+rf_results['Step'] = rf_y_pred
+rf_results = rf_results.reset_index(drop=True)
+
+# rf Model Evaluation
+rf_accuracy = accuracy_score(y_test, rf_y_pred)
+print(f"rf_Accuracy: {rf_accuracy}")
+# Generate the classification report
+rf_report = classification_report(y_test, rf_y_pred)
+print("Classification Report:\n", rf_report)
+# Generate the confusion matrix
+rf_cm = confusion_matrix(y_test, rf_y_pred)
+print("Confusion Matrix:\n", rf_cm)
+
+rf_results['Actual_Step'] = test['Step']
+rf_results['Difference'] = rf_results['Step'] - test['Step']
+print(rf_results)
+rf_non_zero_rows = rf_results[rf_results['Difference'] != 0]
+print(rf_non_zero_rows)
+rf_num_non_zero_rows = rf_non_zero_rows.shape[0]
+rf_num_rows_rf_results = rf_results.shape[0]
+print("Total number of rows with non-zero values:", rf_num_non_zero_rows, "out of", rf_num_rows_rf_results)
+print_asterisk_line()
