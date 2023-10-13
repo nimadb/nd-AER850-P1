@@ -220,19 +220,56 @@ print_asterisk_line()
 
 # %% Step 4 - Classification and Model Development/Engineering
 #stratified sampling
-split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=20231005)
-for train_index, test_index in split.split(df, df["Step"]):
-    strat_train_set = df.loc[train_index].reset_index(drop=True)
-    strat_test_set = df.loc[test_index].reset_index(drop=True)
+# split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=20231005)
+# for train_index, test_index in split.split(df, df["Step"]):
+#     strat_train_set = df.loc[train_index].reset_index(drop=True)
+#     strat_test_set = df.loc[test_index].reset_index(drop=True)
 
-train_data = strat_train_set[['X', 'Y', 'Z', 'Step']]
-print(train_data.info())
-print(train_data.describe())
-print(train_data)
+# train_data = strat_train_set[['X', 'Y', 'Z', 'Step']]
+# print(train_data.info())
+# print(train_data.describe())
+# print(train_data)
 
-train_step_counts = train_data['Step'].value_counts().reset_index()
-train_step_counts.columns = ['Step', 'Count']
-train_step_counts = train_step_counts.sort_values(by='Step')
-print(train_step_counts)
+# train_step_counts = train_data['Step'].value_counts().reset_index()
+# train_step_counts.columns = ['Step', 'Count']
+# train_step_counts = train_step_counts.sort_values(by='Step')
+# print(train_step_counts)
+
+from sklearn.model_selection import train_test_split
+# Load your dataset (Assuming df contains your data)
+X = df[['X', 'Y', 'Z']]
+y = df['Step']
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Analyze training data set
+# print(X_train.info())
+# print(X_train.describe())
+# print(X_train)
+
+from sklearn.linear_model import LogisticRegression
+# Create a Logistic Regression model
+LR_model = LogisticRegression()
+# Train the model on the training data
+LR_model.fit(X_train, y_train)
+
+# Use the trained model to make predictions on the test data
+LR_y_pred = LR_model.predict(X_test)
+
+# print(LR_y_pred.info())
+# print(LR_y_pred.describe())
+# print(LR_y_pred)
+
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+# Calculate accuracy
+LR_accuracy = accuracy_score(y_test, LR_y_pred)
+print(f'LR_Accuracy: {LR_accuracy:.2f}')
+# Generate a classification report
+LR_report = classification_report(y_test, LR_y_pred)
+print(LR_report)
+# Create a confusion matrix
+LR_cm = confusion_matrix(y_test, LR_y_pred)
+print('Confusion Matrix:')
+print(LR_cm)
 
 
