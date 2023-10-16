@@ -6,11 +6,12 @@ Created on Fri Oct 13 14:47:31 2023
 @author: nima.db
 """
 
-# Step 0 - Configuration
+# %% - Step 0 - Configuration
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import joblib
 from scipy import stats
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
@@ -32,7 +33,7 @@ def print_asterisk_line():
 
 print_asterisk_line()
 
-# Step 1a - Data Import
+# %% - Step 1a - Data Import
 print("Importing csv data file as Data Frame")
 df = pd.read_csv('Project 1 Data.csv')
 print("Imported")
@@ -58,7 +59,7 @@ df_counts = df_counts.sort_values(by='Step')
 print(df_counts)
 print_asterisk_line()
 
-# Step 1b - Data Splitting
+# %% - Step 1b - Data Splitting
 # Load your dataset (Assuming df contains your data)
 X = df[['X', 'Y', 'Z']]
 y = df['Step']
@@ -76,7 +77,7 @@ test = test.reset_index(drop=True)
 
 print_asterisk_line()
 
-# Step 2 - Visualization and Data Analysis
+# %% - Step 2 - Visualization and Data Analysis
 print("Visualization and analysis of the entire data set")
 # Scatter matrix of the whole data
 fig = plt.figure()
@@ -154,7 +155,7 @@ for step, group in grouped_data:
     plt.show()
 print_asterisk_line() 
 
-# Step 3 - Correlation Analysis
+# %% - Step 3 - Correlation Analysis
 # Create lists to store the correlations
 correlations_x = []
 correlations_y = []
@@ -237,8 +238,8 @@ for step, group in new_grouped_data:
     print("\n")
 print_asterisk_line() 
 
-# Step 4/5 - Classification and Model Development/Engineering
-# Step 4/5a - Logistic Regression Model
+# %% - Step 4/5 - Classification and Model Development/Engineering
+# %% - Step 4/5a - Logistic Regression Model
 lr_param_grid = {
     'C': [0.001, 0.01, 0.1, 1, 10, 100],
     'penalty': ['l1', 'l2'],
@@ -285,7 +286,7 @@ lr_num_rows_lr_results = lr_results.shape[0]
 print("Total number of rows with non-zero values:", lr_num_non_zero_rows, "out of", lr_num_rows_lr_results)
 print_asterisk_line()
 
-# Step 4/5b - Decision Tree Model
+# %% - Step 4/5b - Decision Tree Model
 # Define the hyperparameter grid
 dt_param_grid = {
     'max_depth': [None, 10, 20, 30],
@@ -333,7 +334,7 @@ dt_num_rows_dt_results = dt_results.shape[0]
 print("Total number of rows with non-zero values:", dt_num_non_zero_rows, "out of", dt_num_rows_dt_results)
 print_asterisk_line()
 
-# Step 4/5c - Random Forest Model
+# %% - Step 4/5c - Random Forest Model
 # Define the hyperparameter grid
 rf_param_grid = {
     'n_estimators': [100, 200, 300],
@@ -382,8 +383,7 @@ rf_num_rows_rf_results = rf_results.shape[0]
 print("Total number of rows with non-zero values:", rf_num_non_zero_rows, "out of", rf_num_rows_rf_results)
 print_asterisk_line()
 
-# Step 6 - Model Evaluation
-import joblib
+# %% - Step 6 - Model Evaluation
 
 # Save the models
 # joblib.dump(lr_best_model, 'logistic_regression_model.joblib')
