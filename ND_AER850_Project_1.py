@@ -394,14 +394,14 @@ print_asterisk_line()
 
 # %% - Step 6 - Model Evaluation
 import joblib
-# Save the Logistic Regression model
-joblib.dump(lr_best_model, 'logistic_regression_model.joblib')
+# # Save the Logistic Regression model
+# joblib.dump(lr_best_model, 'logistic_regression_model.joblib')
 
-# Save the Decision Tree model
-joblib.dump(dt_best_model, 'decision_tree_model.joblib')
+# # Save the Decision Tree model
+# joblib.dump(dt_best_model, 'decision_tree_model.joblib')
 
-# Save the Random Forest model
-joblib.dump(rf_best_model, 'random_forest_model.joblib')
+# # Save the Random Forest model
+# joblib.dump(rf_best_model, 'random_forest_model.joblib')
 
 # Load the Logistic Regression model
 lr_model = joblib.load('logistic_regression_model.joblib')
@@ -419,3 +419,6 @@ new_data = pd.DataFrame(data, columns=new_data_column_names)
 lr_predictions = lr_model.predict(new_data)
 dt_predictions = dt_model.predict(new_data)
 rf_predictions = rf_model.predict(new_data)
+print('Logistic Regression Model Step Prediction:', lr_predictions)
+print('Decision Tree Model Step Prediction:', dt_predictions)
+print('Random Forest Model Step Prediction:', rf_predictions)
