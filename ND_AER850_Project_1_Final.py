@@ -21,6 +21,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from warnings import filterwarnings
 
+
 # Suppress warnings
 filterwarnings('ignore')
 
@@ -120,11 +121,11 @@ print("Visualization and analysis of data set grouped by 'Step'")
 grouped_data = train.groupby('Step')
 
 for step, group in grouped_data:
-    print(f"\nStep {step}:")
     
     # You can perform separate statistical analysis or visualizations for each step here
     # For example, to get descriptive statistics for each step
     descriptive_stats = group.describe()
+    print(f"\nStep {step}:")
     print("Descriptive Statistics:")
     print(descriptive_stats)
 
@@ -231,7 +232,7 @@ for step, group in new_grouped_data:
     new_correlation_z, _ = stats.pearsonr(group['Z'], group['Step'])
     new_correlations_z.append(new_correlation_z)
 
-    print(f"Step {step}:")
+    print(f"Step {step}:")  
     print(f"Correlation X and Step: {new_correlation_x:.2f}")
     print(f"Correlation Y and Step: {new_correlation_y:.2f}")
     print(f"Correlation Z and Step: {new_correlation_z:.2f}")
@@ -264,7 +265,7 @@ lr_results = X_test.copy()
 lr_results['Step'] = lr_y_pred
 lr_results = lr_results.reset_index(drop=True)
 
-# LR Model Evaluation
+# Logisitc Regression Model Evaluation
 # Calculate accuracy
 lr_accuracy = accuracy_score(y_test, lr_y_pred)
 print(f'lr_Accuracy: {lr_accuracy:.2f}')
@@ -314,7 +315,7 @@ dt_results = X_test.copy()
 dt_results['Step'] = dt_y_pred
 dt_results = dt_results.reset_index(drop=True)
 
-# clf Model Evaluation
+# Decision Tree Model Evaluation
 dt_accuracy = accuracy_score(y_test, dt_y_pred)
 print(f"dt_Accuracy: {dt_accuracy}")
 # Generate the classification report
@@ -363,7 +364,7 @@ rf_results = X_test.copy()
 rf_results['Step'] = rf_y_pred
 rf_results = rf_results.reset_index(drop=True)
 
-# rf Model Evaluation
+# Random Forest Model Evaluation
 rf_accuracy = accuracy_score(y_test, rf_y_pred)
 print(f"rf_Accuracy: {rf_accuracy}")
 # Generate the classification report
